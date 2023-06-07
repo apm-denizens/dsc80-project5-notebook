@@ -18,6 +18,26 @@ Since we're dealing with post-game data, our "time of prediction" would be when 
 
 ## Baseline Model
 
--   Describe your model and state the features in your model, including how many are quantitative, ordinal, and nominal, and how you performed any necessary encodings. Report the performance of your model and whether or not you believe your current model is “good” and why.
+-   Describe your model and state the features in your model, including how many are quantitative, ordinal, and nominal, and how you performed any necessary encodings.
+
+For our baseline model, we decided to keep it fairly bare-bones. The features we chose for it were, 'champion' (the name of the champion) and 'kill-death ratio' (an engineered feature for kills/deaths).
+
+For 'champion' (nominal variable), most champions are usually designed for a specific role/position, so there is a ton of information that can be gained for using this column to predict position. We decided to one-hot encode this column, as it is a nominal data column.
+
+The features of 'kills' and 'deaths' (both quantitative discrete variables) both potentially provide information into what role a player has. Roles such as supports, usually will have far less kills than more damage-oriented roles like a midlaner. Furthermore, since supports end up receiving less resources, they will end up being easier to kill than other members on their team. Thus, they would be expected to have a higher amount of deaths as well.
+
+We chose to engineer a new feature 'kill-death ratio' (a quantitative continuous variable) because depending on how long a game goes on, kills and deaths could both increase dramatically. A high-kill hero, in a short game, could have less kills than a passive support in a long game. This fact could very well make it harder for a model to pick up on kill death differences between roles. Accounting for this through a ratio, makes it so that we have a feature that is more consistent and resilient to the effects of game duration.
+
+-   Report the performance of your model and whether or not you believe your current model is “good” and why.
+
+For our baseline model, we achieved these accuracies:
+
+TRAIN: 0.941124497991967
+VAL: 0.931004016064257
+
+In this case, it doesn't seem as if there is too much overfitting going on, which is nice. The training accuracy is not significantly higher than the validation accuracy. Considering that we only used two features, this performance is better than expected. (We initially thought that the model would get maybe an 80% accuracy. No scientific reason for why, pretty much just a feeling.)
+
+(ASK COSTIN)
+For the human benchmark, since neither of us are avid league players, we're not too sure on how perfectly we can tell position from post-game data. Positions such as mid and bot can be difficult to tell apart. They both will have higher kd's and plenty of resources. It's not surprising to see mids have more resrouces than bots.
 
 -   Tip: Make sure to hit all of the points above: many projects in the past have lost points for not doing so.
