@@ -1,8 +1,5 @@
 # League of League of Legends Role Prediction from Post-Game Data
 
-**_ What is "engineering a new feature counted as" _**
-Will just shoving it inside a standard scalar work?
-
 ## Framing the Problem
 
 -   Clearly state your prediction problem and type (classification or regression). If you are building a classifier, make sure to state whether you are performing binary classification or multiclass classification.
@@ -39,12 +36,12 @@ There were some issues with NaN/Inf from dividing by zero. We initially decided 
 
 -   Report the performance of your model and whether or not you believe your current model is “good” and why.
 
-Through using a random-forest classifier with default sklearn hyper-parameters, we achieved these accuracies:
+Usually random-forest classifiers handle large tabular data well, and perform decently in multiclass-classification problems. Through using a random-forest classifier with default sklearn hyper-parameters, we achieved these accuracies:
 
-TRAIN: 0.9421552878179384
+TRAIN: 0.9421552878179384  
 VAL: 0.930843373493976
 
-In this case, it doesn't seem as if there is too much overfitting going on, which is nice. (The training accuracy is not significantly higher than the validation accuracy.) Considering that we used such a simple baseline to achieve a 93% accuracy, we would argue that is pretty decent.
+In this case, it doesn't seem as if there is too much overfitting going on, which is nice. (The training accuracy is not significantly higher than the validation accuracy.) Through this, our validation accuracy being only about a percent lower than our training accuracy, we'd argue that our baseline model performs well on unseen data.
 
 -   Tip: Make sure to hit all of the points above: many projects in the past have lost points for not doing so.
 
@@ -56,41 +53,48 @@ The features we ended up choosing to add were "visionscore", "earned gpm", "cspm
 
 For "visionscore" (quantitative discrete), "vspm" (quantitative continuous), "wardsplaced" (quantitative discrete), and "wpm" (quantitative continuous) these features are all related to supports. Support characters are usually responsible for placing 'wards', which grant 'vision' to their team, so subsequently, having higher values in these columns, makes it more likely that a player was in a support role during a match.
 
-We decided to transform these features using a QuantileTransformer, as they were originally not distributed normally. The QuantileTransformer makes these values normal, while preseving rank. This entire process makes the model more robust to outliers.
+We decided to transform these features using a QuantileTransformer, as they were originally not distributed normally. See image below.
 
-![Vision Score not Normal](images/fairness-teststats.png)
+![Vision Score not Normal](images/distribution-of-visionscore.png)
+
+The QuantileTransformer transforms features to follow a normal/uniform distribution (normal in our case), while preseving rank. While it does come at the cost of being a non-linear transformation (distorts linear correlations between variables), this entire process does end up reducing the impact of marginal outliers, making the model more robust.
 
 For "earnedgold" (quantitative discrete), "earned gpm" (quantitative continuous), and "cspm" (quantitative continuous), having higher values for these features means one is more likely to be receiving a large chunk of resources on their team. Thus, it means that they're more likely to be in a carry role on their team. Having lower values for these columns, means that one is more likely to be a support.
 
-We decided to transform these features using a StandardScaler. Because we needed to use another type of transformer. (TODO)
+For "earnedgold" and "earned gpm", these columns are fairly normal (insert plots), but are not standard normal. Some machine learning algorithms may behave poorly if features are not standard normally distributed. As a result, using a StandardScaler transformation to make these features standard-normal, would likely benefit performance (or not make a difference).
 
 -   Describe the modeling algorithm you chose, the hyperparameters that ended up performing the best, and the method you used to select hyperparameters and your overall model. Describe how your Final Model’s performance is an improvement over your Baseline Model’s performance.
 
-Similar to our baseline model, we decided to use a random forest classifier. We chose to use an ensemble of random decision trees because they're known to perform well in large datasets with thousands of features. Through being able to play on the 'wisdom of crowds', random forests tend to perform pretty well. (STILL SHIT. TODO)
+Similar to our baseline model, we decided to use a random forest classifier.
 
 We used 5-fold cross validation to perform a gridsearch over these hyperparameters for our random forest classifier.
 
+```
 hyperparameters = {
-'random-forestn_estimators': [25, 50, 100, 150],
-'random-forestcriterion': ['gini', 'entropy'],
-'random-forestmax_depth' : [5, 10, 15, None],
-'random-forestmax_features': ['sqrt', 'log2']
+    'random-forestn_estimators': [25, 50, 100, 150],
+    'random-forestcriterion': ['gini', 'entropy'],
+    'random-forestmax_depth' : [5, 10, 15, None],
+    'random-forestmax_features': ['sqrt', 'log2']
 }
+```
 
 Through our grid search, we found that this combination of hyperparameters led to the best results on cross-validation.
+
+```
 {
-'random-forestn_estimators': 150
-'random-forestcriterion': 'gini',
-'random-forestmax_depth': None,
-'random-forestmax_features': 'log2',
+    'random-forestn_estimators': 150
+    'random-forestcriterion': 'gini',
+    'random-forestmax_depth': None,
+    'random-forestmax_features': 'log2',
 }
+```
 
 Through using these hyperparameters in our final model, the accuracy results were:
 
-TRAIN: 1.000000000
+TRAIN: 1.000000000  
 VAL: 0.9572690763052208
 
-It's interesting to note how much higher our training accuracy is compared to our validation accuracy. This suggests that the model did notably overfit. However, our validation accuracy is still boasts a signifiant improvement over the validation accuracy for our baseline model (baseline model validation accuracy was: 0.930843373493976). There was roughly a 2.6% increase in accuracy for the validation set.
+It's interesting to note how much higher our training accuracy is compared to our validation accuracy. This suggests that the model did notably overfit. However, our validation accuracy is still boasts a signifiant improvement over the validation accuracy for our baseline model (baseline model validation accuracy was: 0.930843373493976), which means that our final model generalized better to unseen data. There was roughly a 2.6% increase in accuracy for the validation set.
 
 When running our model on our test set, which has not been used to fit parameters or hyperparameters, (untouched @ this point), our accuracy was:
 
@@ -105,7 +109,7 @@ It's entirely expected for our test accuracy to be lower than our validation acc
 
 In League, there are two sides of the map. 'Red' and 'Blue'. We wanted to see whether model performance differs significantly between these two sides/groups.
 
-Null Hypothesis: Our model is fair. It's accuracy for the Red & Blue sides are roughly the same, and any differences are due to random chance.
+Null Hypothesis: Our model is fair. It's accuracy for the Red & Blue sides are roughly the same, and any differences are due to random chance.  
 Alt Hypothesis: Our model is unfair. It's accuracy for the Blue team is higher.
 
 The test statistic we used was difference in accuracies. (blue_accuracy - red_accuracy). Higher values of the test-statistic point towards the Alternative Hypothesis, and lower values of the test statistic point towards the Null Hypothesis.
