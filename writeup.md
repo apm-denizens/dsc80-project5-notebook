@@ -108,9 +108,11 @@ In League, there are two sides of the map. 'Red' and 'Blue'. We wanted to see wh
 Null Hypothesis: Our model is fair. It's accuracy for the Red & Blue sides are roughly the same, and any differences are due to random chance.
 Alt Hypothesis: Our model is unfair. It's accuracy for the Blue team is higher.
 
-The test statistic we used is difference in accuracies. (blue_accuracy - red_accuracy). Higher values of the test-statistic point towards the Alternative Hypothesis, and lower values of the test statistic point towards the Null Hypothesis.
+The test statistic we used was difference in accuracies. (blue_accuracy - red_accuracy). Higher values of the test-statistic point towards the Alternative Hypothesis, and lower values of the test statistic point towards the Null Hypothesis.
 
-We performed a permutation test and simulated 100 test statistics under the null. We found that at the 0.05 significance, we fail to reject the null-hypothesis with a p-value of 0.10. We lack sufficient evidence to reject the null hypothesis that the two groups have roughly similar accuracies. This does not mean however, that the null-hypothesis is correct. It could very well be the case that the alternative hypothesis is correct, but we just don't have enough information to know for certain.
+Our observed test statistic was: 0.0008353413654619279
+
+We performed a permutation test and simulated 100 test statistics under the null. We found that at the 0.05 significance level, we fail to reject the null-hypothesis with a p-value of 0.13. We lack sufficient evidence to reject the null hypothesis that the two groups have roughly similar accuracies. This does not mean however, that the null-hypothesis is correct. It could very well be the case that the alternative hypothesis is correct, but we just don't have enough information to know for certain.
 
 -   Optional: Embed a visualization related to your permutation test in your website.
 
