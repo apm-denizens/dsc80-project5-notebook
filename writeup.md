@@ -55,13 +55,18 @@ For "visionscore" (quantitative discrete), "vspm" (quantitative continuous), "wa
 
 We decided to transform these features using a QuantileTransformer, as they were originally not distributed normally. See image below.
 
-![Vision Score not Normal](images/distribution-of-visionscore.png)
+<!-- ![Vision Score not Normal](images/distribution-of-visionscore.png) -->
+<iframe src="images/visionscore_histogram.html" width="100%" height="500px" frameBorder=0></iframe>
 
 The QuantileTransformer transforms features to follow a normal/uniform distribution (normal in our case), while preseving rank. While it does come at the cost of being a non-linear transformation (distorts linear correlations between variables), this entire process does end up reducing the impact of marginal outliers, making the model more robust.
 
 For "earnedgold" (quantitative discrete), "earned gpm" (quantitative continuous), and "cspm" (quantitative continuous), having higher values for these features means one is more likely to be receiving a large chunk of resources on their team. Thus, it means that they're more likely to be in a carry role on their team. Having lower values for these columns, means that one is more likely to be a support.
 
-For "earnedgold" and "earned gpm", these columns are fairly normal (insert plots), but are not standard normal. Some machine learning algorithms may behave poorly if features are not standard normally distributed. As a result, using a StandardScaler transformation to make these features standard-normal, would likely benefit performance (or not make a difference).
+For "earnedgold" and "earned gpm", these columns are fairly normal (insert plots), but are not standard normal.
+
+<iframe src="images/earnedgold_histogram.html" width="100%" height="500px" frameBorder=0></iframe>
+
+Some machine learning algorithms may behave poorly if features are not standard normally distributed. As a result, using a StandardScaler transformation to make these features standard-normal, would likely benefit performance (or not make a difference).
 
 -   Describe the modeling algorithm you chose, the hyperparameters that ended up performing the best, and the method you used to select hyperparameters and your overall model. Describe how your Final Model’s performance is an improvement over your Baseline Model’s performance.
 
@@ -120,7 +125,8 @@ We performed a permutation test and simulated 100 test statistics under the null
 
 -   Optional: Embed a visualization related to your permutation test in your website.
 
-![Permutation Test Results](images/fairness-teststats.png)
+<!-- ![Permutation Test Results](images/fairness-teststats.png) -->
+<iframe src="images/teststats_histogram.html" width="100%" height="500px" frameBorder=0></iframe>
 
 -   Tip: When making writing your conclusions to the statistical tests in this project, never use language that implies an absolute conclusion; since we are performing statistical tests and not randomized controlled trials, we cannot prove that either hypothesis is 100% true or false.
 
