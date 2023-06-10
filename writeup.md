@@ -88,7 +88,7 @@ Through our grid search, we found that this combination of hyperparameters led t
 ```
 {
     'random-forestn_estimators': 150
-    'random-forestcriterion': 'gini',
+    'random-forestcriterion': 'entropy',
     'random-forestmax_depth': None,
     'random-forestmax_features': 'log2',
 }
